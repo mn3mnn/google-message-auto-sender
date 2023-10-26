@@ -14,11 +14,11 @@ def main():
     # Todo: start updater thread
 
     # while True:
-    count = 0
     unsent_messages = Message.get_unsent_messages()
+    if len(unsent_messages) > 3:
+        unsent_messages = unsent_messages[:3]
+
     for msg in unsent_messages:
-        if count == 2:
-            break
         mobile_number = msg.mobile_number
         content = msg.content
         msg_id = msg.id
@@ -26,14 +26,23 @@ def main():
         try:
             bot.send_message(mobile_number, content)
             Message.update(status="pending", pending_at=datetime.datetime.utcnow()).where(Message.id == msg_id).execute()
+            status = bot.get_msg_status()
+            if status == "sent":
+                Message.update(status="sent", sent_at=datetime.datetime.utcnow()).where(Message.id == msg_id).execute()
+
+            elif status == "failed":
+                Message.update(status="failed").where(Message.id == msg_id).execute()
+
+            elif status == "timeout":
+                Message.update(status="timeout").where(Message.id == msg_id).execute()
 
         except Exception as e:
             print(e)
             Message.update(status="failed").where(Message.id == msg_id).execute()
 
-        time.sleep(2)
+        time.sleep(1)
 
-    # time.sleep(10)
+    time.sleep(5)
 
 
 if __name__ == "__main__":

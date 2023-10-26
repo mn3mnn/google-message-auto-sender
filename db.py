@@ -57,44 +57,5 @@ class Message(BaseModel):
         msg = cls.select().where(cls.id == msg_id).get()
         return msg.content
 
-    @classmethod
-    def get_status(cls, msg_id):
-        msg = cls.select().where(cls.id == msg_id).get()
-        return msg.status
-
-    @classmethod
-    def get_pending_at(cls, msg_id):
-        msg = cls.select().where(cls.id == msg_id).get()
-        return msg.pending_at
-
-    @classmethod
-    def get_sent_at(cls, msg_id):
-        msg = cls.select().where(cls.id == msg_id).get()
-        return msg.sent_at
-
-    @classmethod
-    def get_conversation_id(cls, msg_id):
-        msg = cls.select().where(cls.id == msg_id).get()
-        return msg.conversation_id
-
-    @classmethod
-    def make_status_pending(cls, msg_id):
-        msg = cls.select().where(cls.id == msg_id).get()
-        msg.status = "pending"
-        msg.save()
-
-    @classmethod
-    def make_status_sent(cls, msg_id):
-        msg = cls.select().where(cls.id == msg_id).get()
-        msg.status = "sent"
-        msg.sent_at = datetime.utcnow()
-        msg.save()
-
-    @classmethod
-    def make_status_failed(cls, msg_id):
-        msg = cls.select().where(cls.id == msg_id).get()
-        msg.status = "failed"
-        msg.save()
-
 
 # db.create_tables([Message])  # uncomment this line to create tables or create the db file then comment it again
