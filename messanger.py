@@ -16,7 +16,7 @@ from db import *
 load_dotenv()  # take environment variables from example_for_dot_env.
 
 
-class Bot:
+class Messanger:
     def __init__(self):
         geckodriver_path = os.getenv('GECKODRIVER_PATH')
         firefox_binary = os.getenv('FIREFOX_BIN')
@@ -76,7 +76,7 @@ class Bot:
         time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
         self.driver.find_element(By.CSS_SELECTOR, message_input_selector).send_keys(Keys.ENTER)
 
-    def get_msg_status(self):  # wait until timestamp is visible and return status
+    def wait_and_get_msg_status(self):  # wait until timestamp is visible and return status
 
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".error-icon")))  # failed to sent
         try:

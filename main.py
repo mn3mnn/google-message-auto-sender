@@ -1,15 +1,12 @@
-from db import *
-from bot import *
+from messanger import *
 
 import datetime
 import time
-import threading
-import random
 
 
 def main():
-    bot = Bot()
-    bot.login()
+    messanger = Messanger()
+    messanger.login()
 
     # Todo: start updater thread
 
@@ -22,9 +19,9 @@ def main():
             msg_id = msg.id
             print(f"Sending message: {content} to {mobile_number}")
             try:
-                bot.send_message(mobile_number, content)
+                messanger.send_message(mobile_number, content)
                 Message.update(status="pending", pending_at=datetime.datetime.utcnow()).where(Message.id == msg_id).execute()
-                status = bot.get_msg_status()
+                status = messanger.wait_and_get_msg_status()
                 if status == "sent":
                     Message.update(status="sent", sent_at=datetime.datetime.utcnow()).where(Message.id == msg_id).execute()
 

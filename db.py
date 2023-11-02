@@ -16,20 +16,22 @@ class BaseModel(Model):
 
 class Message(BaseModel):
     id = AutoField(primary_key=True)
-    content = TextField()
-    mobile_number = CharField(max_length=45)
+    content = TextField(null=False)
+    mobile_number = CharField(max_length=20, null=False)
     status = CharField(max_length=45, default="unsent")
-    created_at = DateTimeField(default=datetime.utcnow)
+    added_at = DateTimeField(default=datetime.utcnow)
     pending_at = DateTimeField(null=True)
     sent_at = DateTimeField(null=True)
-    conversation_id = CharField(max_length=45, null=True)
+    # account_id = TextField(null=True)
+    # user_id = TextField(null=True)
 
     def __str__(self):
         return f"Message: {self.content} to {self.mobile_number}"
 
     @classmethod
     def add_new_message(cls, content, mobile_number):
-        cls.create(content=content, mobile_number=mobile_number)
+        msg = cls.create(content=content, mobile_number=mobile_number)
+        return msg.id
 
     @classmethod
     def get_unsent_messages(cls):
