@@ -2,9 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
-recaptcha_audio/*.wav
+API/node_modules/
 myenv/
+
 # C extensions
 *.so
 .idea/

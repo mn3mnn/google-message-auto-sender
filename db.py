@@ -23,7 +23,7 @@ class Message(BaseModel):
     pending_at = DateTimeField(null=True)
     sent_at = DateTimeField(null=True)
     # account_id = TextField(null=True)
-    # user_id = TextField(null=True)
+    # user_id/user_key = TextField(null=True) not null
 
     def __str__(self):
         return f"Message: {self.content} to {self.mobile_number}"
@@ -59,9 +59,14 @@ class Message(BaseModel):
         msg = cls.select().where(cls.id == msg_id).get()
         return msg.content
 
+    @classmethod
+    def get_status(cls, msg_id):
+        msg = cls.select().where(cls.id == msg_id).get()
+        return msg.status
+
 
 if __name__ == "__main__":
-    # db.create_tables([Message])  # uncomment this line to create tables or create the db file then comment it again
+    db.create_tables([Message])  # uncomment this line to create tables or create the db file then comment it again
 
     # uncomment the below line to add new message to db, then run this file
     # Message.add_new_message("Hello", "0123456789")
