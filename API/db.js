@@ -1,9 +1,8 @@
-// db.js
-
 const mysql = require('mysql');
 const url = require('url');
 const dotenv = require('dotenv');
 const path = require('path');
+
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // Parse the DATABASE_URL
@@ -17,6 +16,14 @@ const dbConfig = {
 
 const db = mysql.createConnection(dbConfig);
 
+db.connect((err) => {
+    if (err) {
+    console.error('Error connecting to MySQL:', err);
+    } else {
+    console.log('Connected to MySQL');
+    }
+});
+
 
 ////////////////////////////////////////////////////////////////
 const insertQuery = `
@@ -27,14 +34,6 @@ const insertQuery = `
 
 
 ////////////////////////////////////////////////////////////////
-
-db.connect((err) => {
-    if (err) {
-    console.error('Error connecting to MySQL:', err);
-    } else {
-    console.log('Connected to MySQL');
-    }
-});
 
 function getCurrDateTimeFormatForMySQL() {
     const currentUtcTime = new Date().toISOString().slice(0, 19).replace('T', ' '); // Get the current UTC time in the 'YYYY-MM-DD HH:MM:SS' format
@@ -56,19 +55,19 @@ function insertMessage(number, content, key) {
                     'ID' : result.insertId,
                     'attachments' : undefined,
                     'deliveredDate' : undefined,
-                    'deviceID' : 61,
+                    'deviceID' : 1,
                     'errorCode' : undefined,
                     'expiryDate' : undefined,
-                    'groupID' : 'PKmqdMwox0wfHMS90F651df417203f50.16079165',
+                    'groupID' : undefined,
                     'message': `${content}`,
                     'number' : `${number}`,
                     'prioritize' : 1,
                     'resultCode' : undefined,
                     'retries' : undefined,
                     'schedule' : undefined,
-                    'sentDate' : '2023-10-04T23:24:07+0000',
+                    'sentDate' : undefined,
                     'simSlot' : undefined,
-                    'status' : 'Pending',
+                    'status' : 'pending',
                     'type' : 'sms',
                     'userID' : 1
                 };

@@ -22,7 +22,7 @@ app.post(process.env.SEND_MSG_API, async (req, res) => {
     const type = req.body.type;
     const prioritize = req.body.prioritize;
 
-    console.log(req.body);
+    //console.log(req.body);
 
     if (!number || !message || !key || !devices || !type || !prioritize) {
         res.status(400).json({ error: 'Invalid request' });
@@ -49,11 +49,12 @@ app.post(process.env.SEND_MSG_API, async (req, res) => {
             'data':{
                 'messages': [],
                 },
-            'error': err,
+            'error': 'couldn\'t insert message into database',
             'success': false
             });
         }
     });
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
