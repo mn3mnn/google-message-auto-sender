@@ -1,21 +1,28 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const db = require('./db'); // Import the database controller module
-const { logEvents } = require('./logEvent');
+const logEvents = require('./logEvent');
+const path = require('path');
+const dotenv = require('dotenv');
+
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-app.post('/api/send', async (req, res) => {
-    logEvents(req.body);
+
+app.post(process.env.SEND_MSG_API, async (req, res) => {
+    logEvents(req.body.message + '\t' + req.body.number + '\t' + req.body.key);
     const number = req.body.number;
     const message = req.body.message;
     const key = req.body.key;
     const devices = req.body.devices;
     const type = req.body.type;
     const prioritize = req.body.prioritize;
+
+    console.log(req.body);
 
     if (!number || !message || !key || !devices || !type || !prioritize) {
         res.status(400).json({ error: 'Invalid request' });
@@ -28,12 +35,12 @@ app.post('/api/send', async (req, res) => {
     }
 
     try {
-        const messageId = await db.insertMessage(number, message, key);
+        const insertedMessage = await db.insertMessage(number, message, key);
         res.status(201).json({
             'data':{
-                'messages': [resolve(result)],
+                'messages': [insertedMessage],
                 },
-                'error': undef,
+                'error': undefined,
                 'success': true
             }
         );
@@ -42,7 +49,7 @@ app.post('/api/send', async (req, res) => {
             'data':{
                 'messages': [],
                 },
-            'error': resolve(err),
+            'error': err,
             'success': false
             });
         }

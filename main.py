@@ -8,8 +8,6 @@ def main():
     messanger = Messanger()
     messanger.login()
 
-    # Todo: start updater thread
-
     while True:
         unsent_messages = Message.get_unsent_messages()
 

@@ -66,7 +66,7 @@ class Message(BaseModel):
 
 
 if __name__ == "__main__":
-    db.create_tables([Message])  # uncomment this line to create tables or create the db file then comment it again
+    # db.create_tables([Message])  # uncomment this line to create tables or create the db file then comment it again
 
     # uncomment the below line to add new message to db, then run this file
     # Message.add_new_message("Hello", "0123456789")
