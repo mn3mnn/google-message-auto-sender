@@ -22,8 +22,8 @@ for i in range(50, 55):
         "devices": "device1",
         "prioritize": 1
     }
-    threading.Thread(target=requests.post, args=(send_url, msg)).start()
-    # response = requests.post(send_url, json=msg)
-    # print(response.text)
+    # threading.Thread(target=requests.post, args=(send_url, msg)).start()
+    response = requests.post(send_url, json=msg)
+    print(response.text)
 
 
