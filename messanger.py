@@ -20,8 +20,10 @@ class Messanger:
     def __init__(self):
         geckodriver_path = os.getenv('GECKODRIVER_PATH')
         firefox_binary = os.getenv('FIREFOX_BIN')
-        self.driver = webdriver.Firefox(executable_path=geckodriver_path,
-                                        firefox_binary=firefox_binary)
+        # self.driver = webdriver.Firefox(executable_path=geckodriver_path,
+        #                                 firefox_binary=firefox_binary)
+
+        self.driver = webdriver.Firefox()
 
         self.driver.maximize_window()
         self.wait10 = WebDriverWait(self.driver, 10)
