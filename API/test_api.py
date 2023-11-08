@@ -1,29 +1,21 @@
 # send post requests to test the api
 
 import requests
-import json
-from dotenv import load_dotenv
-from os import getenv
-import json
-import threading
+from urls import *
 
-load_dotenv()
+from api import *
 
-send_url = f'http://localhost:3000{getenv("SEND_MSG_API")}'
+send_msg_url = f'http://localhost:' + str(API_PORT) + SEND_MSG_ROUTE
 
 
-# send 10 async requests
-for i in range(50, 55):
-    msg = {
-        "message": f"test message{i}",
-        "number": "201122960525",
-        "key": getenv("API_KEY"),
-        "type": "sms",
-        "devices": "device1",
-        "prioritize": 1
+for i in range(5):
+    data = {
+        'key': API_KEYS[0],
+        'message': f'Test message {i}',
+        'number': '0912345678',
+        'type': 'sms'
     }
-    # threading.Thread(target=requests.post, args=(send_url, msg)).start()
-    response = requests.post(send_url, json=msg)
+    response = requests.post(send_msg_url, json=data)
+    print(response.status_code)
     print(response.text)
-
-
+    print()

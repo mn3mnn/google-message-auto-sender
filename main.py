@@ -1,7 +1,17 @@
 from messanger import *
+from urls import *
+# from API.api import *
 
+import requests
+import http
 import datetime
 import time
+
+
+# get_unsent_messages_url = 'http://' + API_HOST + GET_MSG_ROUTE + '?status=unsent'
+# send_msg_url = 'http://' + API_HOST + SEND_MSG_ROUTE
+
+send_response_url = SEND_RESPONSE_URL
 
 
 def main():
@@ -9,33 +19,59 @@ def main():
     messanger.login()
 
     while True:
-        unsent_messages = Message.get_unsent_messages()
 
-        for msg in unsent_messages:
-            mobile_number = msg.mobile_number
-            content = msg.content
-            msg_id = msg.id
-            print(f"Sending message: {content} to {mobile_number}")
+        messages = Message.get_messages_by_status('unsent')
+        for message in messages:
+            msg_id = message.id
+            mobile_number = message.mobile_number
+            message_content = message.content
+            if not all([msg_id, mobile_number, message_content]):
+                continue
+
+            status = messanger.send_message(mobile_number, message_content)
+            status_date = datetime.datetime.now()
+
+            if status == 'failed':
+                Message.set_msg_status(msg_id, status)
+            elif status == 'sent':
+                Message.set_msg_status(msg_id, status)
+            elif status == 'timeout':
+                Message.set_msg_status(msg_id, status)
+
             try:
-                messanger.send_message(mobile_number, content)
-                Message.update(status="pending", pending_at=datetime.datetime.utcnow()).where(Message.id == msg_id).execute()
-                status = messanger.wait_and_get_msg_status()
-                if status == "sent":
-                    Message.update(status="sent", sent_at=datetime.datetime.utcnow()).where(Message.id == msg_id).execute()
-
-                elif status == "failed":
-                    Message.update(status="failed").where(Message.id == msg_id).execute()
-
-                elif status == "timeout":
-                    Message.update(status="timeout").where(Message.id == msg_id).execute()
-
+                requests.get(send_response_url.format(msg_id, status_date, status))
             except Exception as e:
+                print('Error sending response to the user(client)')
                 print(e)
-                Message.update(status="failed").where(Message.id == msg_id).execute()
 
-            time.sleep(1)
+        time.sleep(1)
 
-        time.sleep(5)
+
+        # response = requests.get(get_unsent_messages_url + f'&key={API_KEYS[0]}')
+        # if response.status_code == 200:
+        #     data = response.json()
+        #     messages = data.get('data', {}).get('messages', [])
+        #     for message in messages:
+        #         msg_id = message.get('ID', None)
+        #         mobile_number = message.get('number', None)
+        #         message_content = message.get('message', None)
+        #         if not all([msg_id, mobile_number, message_content]):
+        #             continue
+        #
+        #         status = messanger.send_message(mobile_number, message_content)
+        #         status_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        #
+        #         if status == 'failed':
+        #             Message.update_msg_status(msg_id, status)  # update status in the database
+        #         elif status == 'sent':
+        #             Message.update_msg_status(msg_id, status)
+        #         elif status == 'timeout':
+        #             Message.update_msg_status(msg_id, status)
+        #
+        #         # send response to the user(client)
+        #         requests.get(send_response_url.format(msg_id, status_date, status))
+        #
+        # time.sleep(5)
 
 
 if __name__ == "__main__":

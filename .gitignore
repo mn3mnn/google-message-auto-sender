@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 API/node_modules/
 myenv/
+venv/
 
 # C extensions
 *.so

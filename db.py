@@ -31,38 +31,38 @@ class Message(BaseModel):
     @classmethod
     def add_new_message(cls, content, mobile_number):
         msg = cls.create(content=content, mobile_number=mobile_number)
-        return msg.id
+        return msg
 
     @classmethod
-    def get_unsent_messages(cls):
-        return cls.select().where(cls.status == "unsent")
+    def get_msg(cls, msg_id):
+        return cls.select().where(cls.id == msg_id).get()
 
     @classmethod
-    def get_pending_messages(cls):
-        return cls.select().where(cls.status == "pending")
-
-    @classmethod
-    def get_sent_messages(cls):
-        return cls.select().where(cls.status == "sent")
-
-    @classmethod
-    def get_failed_messages(cls):
-        return cls.select().where(cls.status == "failed")
-
-    @classmethod
-    def get_mobile_number(cls, msg_id):
-        msg = cls.select().where(cls.id == msg_id).get()
-        return msg.mobile_number
-
-    @classmethod
-    def get_content(cls, msg_id):
-        msg = cls.select().where(cls.id == msg_id).get()
-        return msg.content
+    def get_messages_by_status(cls, status):
+        return cls.select().where(cls.status == status)
 
     @classmethod
     def get_status(cls, msg_id):
         msg = cls.select().where(cls.id == msg_id).get()
         return msg.status
+
+    @classmethod
+    def set_msg_status(cls, msg_id, status):
+        msg = cls.select().where(cls.id == msg_id).get()
+        msg.status = status
+        msg.save()
+
+    @classmethod
+    def set_msg_pending_at(cls, msg_id, pending_at):
+        msg = cls.select().where(cls.id == msg_id).get()
+        msg.pending_at = pending_at
+        msg.save()
+
+    @classmethod
+    def set_msg_sent_at(cls, msg_id, sent_at):
+        msg = cls.select().where(cls.id == msg_id).get()
+        msg.sent_at = sent_at
+        msg.save()
 
 
 if __name__ == "__main__":

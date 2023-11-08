@@ -2,7 +2,7 @@ import os
 import random
 import time
 import json
-
+import platform
 from dotenv import load_dotenv
 
 from selenium import webdriver
@@ -18,20 +18,26 @@ load_dotenv()  # take environment variables from example_for_dot_env.
 
 class Messanger:
     def __init__(self):
-        geckodriver_path = os.getenv('GECKODRIVER_PATH')
-        firefox_binary = os.getenv('FIREFOX_BIN')
-        # self.driver = webdriver.Firefox(executable_path=geckodriver_path,
-        #                                 firefox_binary=firefox_binary)
+        if platform.system() == "Linux":
+            self.driver = webdriver.Firefox()
+        elif platform.system() == "Windows":
+            geckodriver_path = os.getenv('GECKODRIVER_PATH')
+            firefox_binary = os.getenv('FIREFOX_BIN')
 
-        self.driver = webdriver.Firefox()
+            self.driver = webdriver.Firefox(executable_path=geckodriver_path,
+                                            firefox_binary=firefox_binary)
 
         self.driver.maximize_window()
+        self.wait5 = WebDriverWait(self.driver, 5)
         self.wait10 = WebDriverWait(self.driver, 10)
-        self.wait30 = WebDriverWait(self.driver, 30)
+        self.wait30 = WebDriverWait(self.driver, 20)
         self.wait120 = WebDriverWait(self.driver, 120)
 
     def __del__(self):
-        self.driver.quit()
+        try:
+            self.driver.quit()
+        except:
+            pass
 
     def is_logged_in(self):
         try:
@@ -44,42 +50,52 @@ class Messanger:
             return False
 
     def login(self):
-        self.driver.get("https://messages.google.com/web/authentication")
-        while not self.is_logged_in():
-            time.sleep(1)
+        try:
+            self.driver.get("https://messages.google.com/web/authentication")
+            while not self.is_logged_in():
+                time.sleep(1)
 
-        return True
+            return True
+        except:
+            return False
 
     def send_message(self, mobile_number, content):
-        # click on start new conversation on the left, enter mobile number,
-        # click on send to <mobile_num>, enter message, click enter
+        try:
 
-        start_new_conv_selector = "a[href='/web/conversations/new']"
-        mobile_number_input_selector = ".input"
-        send_to_mobile_number_btn_selector = ".button.mdc-button.mat-mdc-button.mat-unthemed.mat-mdc-button-base"
-        message_input_selector = "textarea"
+            # click on start new conversation on the left, enter mobile number,
+            # click on send to <mobile_num>, enter message, click enter
 
-        self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, start_new_conv_selector)))
-        time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
-        self.driver.find_element(By.CSS_SELECTOR, start_new_conv_selector).click()
+            start_new_conv_selector = "a[href='/web/conversations/new']"
+            mobile_number_input_selector = ".input"
+            send_to_mobile_number_btn_selector = ".button.mdc-button.mat-mdc-button.mat-unthemed.mat-mdc-button-base"
+            message_input_selector = "textarea"
 
-        self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, mobile_number_input_selector)))
-        time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
-        self.driver.find_element(By.CSS_SELECTOR, mobile_number_input_selector).send_keys(mobile_number)
+            self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, start_new_conv_selector)))
+            time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
+            self.driver.find_element(By.CSS_SELECTOR, start_new_conv_selector).click()
 
-        self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, send_to_mobile_number_btn_selector)))
-        time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
-        self.driver.find_element(By.CSS_SELECTOR, send_to_mobile_number_btn_selector).click()
+            self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, mobile_number_input_selector)))
+            time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
+            self.driver.find_element(By.CSS_SELECTOR, mobile_number_input_selector).send_keys(mobile_number)
 
-        self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, message_input_selector)))
-        time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
-        self.driver.find_element(By.CSS_SELECTOR, message_input_selector).send_keys(content)
+            self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, send_to_mobile_number_btn_selector)))
+            time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
+            self.driver.find_element(By.CSS_SELECTOR, send_to_mobile_number_btn_selector).click()
 
-        time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
-        self.driver.find_element(By.CSS_SELECTOR, message_input_selector).send_keys(Keys.ENTER)
+            self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, message_input_selector)))
+            time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
+            self.driver.find_element(By.CSS_SELECTOR, message_input_selector).send_keys(content)
 
-    def wait_and_get_msg_status(self):  # wait until timestamp is visible and return status
+            time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
+            self.driver.find_element(By.CSS_SELECTOR, message_input_selector).send_keys(Keys.ENTER)
 
+            # wait until timestamp is visible and return status
+            return self.__wait_and_get_msg_status()
+
+        except:
+            return "failed"
+
+    def __wait_and_get_msg_status(self):  # wait until timestamp is visible and return status
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".error-icon")))  # failed to sent
         try:
             # wait until pending icon to be invisible

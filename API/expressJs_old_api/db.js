@@ -116,10 +116,6 @@ let db;
     }
 })();
 
-const insertQuery = `
-    INSERT INTO message (mobile_number, content, status, added_at)
-    VALUES (?, ?, ?, ?)
-`;
 
 function getCurrDateTimeFormatForMySQL() {
     const currentUtcTime = new Date().toISOString().slice(0, 19).replace('T', ' '); // Get the current UTC time in the 'YYYY-MM-DD HH:MM:SS' format
@@ -130,6 +126,12 @@ function getCurrDateTimeFormatForMySQL() {
 async function insertMessage(number, content, key) {
     const status = 'unsent';
     const added_at = getCurrDateTimeFormatForMySQL();
+
+
+    const insertQuery = `
+        INSERT INTO message (mobile_number, content, status, added_at)
+        VALUES (?, ?, ?, ?)
+    `;
 
     try {
         const [rows, fields] = await db.execute(insertQuery, [number, content, status, added_at]);
@@ -161,6 +163,37 @@ async function insertMessage(number, content, key) {
     }
 }
 
+async function getMessage(msg_id) {
+    const query = `
+        SELECT * FROM message
+        WHERE id = ?
+    `;
+
+    try {
+        const [rows, fields] = await db.execute(query, [msg_id]);
+        return rows[0];
+    } catch (err) {
+        console.error('Error getting message:', err);
+        throw err;
+    }
+}
+
+async function getUnsentMessages() {
+    const query = `
+        SELECT * FROM message
+        WHERE status = 'unsent'
+    `;
+
+    try {
+        const [rows, fields] = await db.execute(query);
+        return rows;
+    } catch (err) {
+        console.error('Error getting unsent messages:', err);
+        throw err;
+    }
+}
+
 module.exports = {
     insertMessage,
+    getUnsentMessages,
 };
