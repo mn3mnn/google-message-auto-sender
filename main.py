@@ -1,6 +1,6 @@
 from messanger import *
 from urls import *
-# from API.api import *
+# from api import *
 
 import requests
 import http
