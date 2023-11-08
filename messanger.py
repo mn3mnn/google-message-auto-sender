@@ -53,8 +53,7 @@ class Messanger:
         try:
             self.driver.get("https://messages.google.com/web/authentication")
             while not self.is_logged_in():
-                time.sleep(1)
-
+                time.sleep(0.5)
             return True
         except:
             return False
@@ -71,22 +70,22 @@ class Messanger:
             message_input_selector = "textarea"
 
             self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, start_new_conv_selector)))
-            time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
+            time.sleep(random.uniform(0, 1))  # sleep random time between 1 and 3 seconds
             self.driver.find_element(By.CSS_SELECTOR, start_new_conv_selector).click()
 
             self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, mobile_number_input_selector)))
-            time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
+            time.sleep(random.uniform(0, 1))  # sleep random time between 1 and 3 seconds
             self.driver.find_element(By.CSS_SELECTOR, mobile_number_input_selector).send_keys(mobile_number)
 
             self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, send_to_mobile_number_btn_selector)))
-            time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
+            time.sleep(random.uniform(0, 1))  # sleep random time between 1 and 3 seconds
             self.driver.find_element(By.CSS_SELECTOR, send_to_mobile_number_btn_selector).click()
 
             self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, message_input_selector)))
-            time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
+            time.sleep(random.uniform(0, 1))  # sleep random time between 1 and 3 seconds
             self.driver.find_element(By.CSS_SELECTOR, message_input_selector).send_keys(content)
 
-            time.sleep(random.uniform(1, 2))  # sleep random time between 1 and 3 seconds
+            time.sleep(random.uniform(0, 1))  # sleep random time between 1 and 3 seconds
             self.driver.find_element(By.CSS_SELECTOR, message_input_selector).send_keys(Keys.ENTER)
 
             # wait until timestamp is visible and return status
@@ -99,7 +98,7 @@ class Messanger:
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".error-icon")))  # failed to sent
         try:
             # wait until pending icon to be invisible
-            self.wait30.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sending-icon")))  # pending icon
+            self.wait10.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sending-icon")))  # pending icon
             try:
                 self.driver.find_element(By.CSS_SELECTOR, "mws-absolute-timestamp")
                 print("sent")

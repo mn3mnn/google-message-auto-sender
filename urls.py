@@ -1,5 +1,4 @@
 # our api routes
-API_HOST = 'localhost'
 SEND_MSG_ROUTE = '/api/send-msg'
 GET_MSG_ROUTE = '/api/get-msg'
 

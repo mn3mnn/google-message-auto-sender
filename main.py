@@ -8,9 +8,6 @@ import datetime
 import time
 
 
-# get_unsent_messages_url = 'http://' + API_HOST + GET_MSG_ROUTE + '?status=unsent'
-# send_msg_url = 'http://' + API_HOST + SEND_MSG_ROUTE
-
 send_response_url = SEND_RESPONSE_URL
 
 
