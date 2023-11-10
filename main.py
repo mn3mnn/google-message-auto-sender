@@ -36,7 +36,12 @@ def main():
                 Message.set_msg_status(msg_id, status)
 
             try:
-                requests.get(send_response_url.format(msg_id, status_date, status))
+                msg_json = {
+                    'ID': msg_id,
+                    'status': status,
+                }
+                print(requests.post(send_response_url, json=msg_json))
+
             except Exception as e:
                 print('Error sending response to the user(client)')
                 print(e)
