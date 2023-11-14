@@ -39,6 +39,7 @@ def main():
                 msg_json = {
                     'ID': msg_id,
                     'status': status,
+                    'dst_number': mobile_number
                 }
                 print(requests.post(send_response_url, json=msg_json))
 

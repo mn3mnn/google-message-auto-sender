@@ -1,0 +1,73 @@
+send message url = "http://185.182.184.191/api/send-msg"
+
+-Method: POST
+
+-Route: POST /api/send-msg
+
+
+
+-Request Body: JSON object with the following parameters:
+
+{
+	"message": "hello world!",
+	"number": "201122334455",
+	"key": "your_API_key_for_authorization",
+	"devices": "optional param",
+	"type": "optional param",
+	"prioritize": "optional param"
+}
+
+
+
+
+-Response: JSON response with the following structure:
+
+{
+    "data": {
+        "messages": [
+            {
+                "ID": null,
+                "attachments": null,
+                "deliveredDate": null,
+                "deviceID": null,
+                "errorCode": null,
+                "expiryDate": null,
+                "groupID": null,
+                "message": null,
+                "number": null,
+                "prioritize": null,
+                "resultCode": null,
+                "retries": null,
+                "schedule": null,
+                "sentDate": null,
+                "simSlot": null,
+                "status": null,
+                "type": null,
+                "userID": null
+            }
+        ]
+    },
+    "error": null,
+    "success": true
+}
+
+
+-Status Codes:
+200: Successful request.
+400: Invalid request.
+401: Unauthorized.
+500: Server error.
+
+
+
+
+
+Additional Notes:
+
+- use key="123456" for testing
+
+- "message", "number", and "key" attrs are required and the other are optional
+
+- dates are in utc format
+
+
