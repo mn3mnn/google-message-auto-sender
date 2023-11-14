@@ -69,23 +69,23 @@ class Messanger:
             send_to_mobile_number_btn_selector = ".button.mdc-button.mat-mdc-button.mat-unthemed.mat-mdc-button-base"
             message_input_selector = "textarea"
 
-            self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, start_new_conv_selector)))
-            time.sleep(random.uniform(0, 1))  # sleep random time between 1 and 3 seconds
+            self.wait5.until(EC.presence_of_element_located((By.CSS_SELECTOR, start_new_conv_selector)))
+            time.sleep(random.uniform(0, 0.2))  # sleep random time between 1 and 3 seconds
             self.driver.find_element(By.CSS_SELECTOR, start_new_conv_selector).click()
 
-            self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, mobile_number_input_selector)))
-            time.sleep(random.uniform(0, 1))  # sleep random time between 1 and 3 seconds
+            self.wait5.until(EC.presence_of_element_located((By.CSS_SELECTOR, mobile_number_input_selector)))
+            time.sleep(random.uniform(0, 0.2))  # sleep random time between 1 and 3 seconds
             self.driver.find_element(By.CSS_SELECTOR, mobile_number_input_selector).send_keys(mobile_number)
 
-            self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, send_to_mobile_number_btn_selector)))
-            time.sleep(random.uniform(0, 1))  # sleep random time between 1 and 3 seconds
+            self.wait5.until(EC.presence_of_element_located((By.CSS_SELECTOR, send_to_mobile_number_btn_selector)))
+            time.sleep(random.uniform(0, 0.2))  # sleep random time between 1 and 3 seconds
             self.driver.find_element(By.CSS_SELECTOR, send_to_mobile_number_btn_selector).click()
 
-            self.wait10.until(EC.presence_of_element_located((By.CSS_SELECTOR, message_input_selector)))
-            time.sleep(random.uniform(0, 1))  # sleep random time between 1 and 3 seconds
+            self.wait5.until(EC.presence_of_element_located((By.CSS_SELECTOR, message_input_selector)))
+            time.sleep(random.uniform(0, 0.2))  # sleep random time between 1 and 3 seconds
             self.driver.find_element(By.CSS_SELECTOR, message_input_selector).send_keys(content)
 
-            time.sleep(random.uniform(0, 1))  # sleep random time between 1 and 3 seconds
+            time.sleep(random.uniform(0, 0.1))  # sleep random time between 1 and 3 seconds
             self.driver.find_element(By.CSS_SELECTOR, message_input_selector).send_keys(Keys.ENTER)
 
             # wait until timestamp is visible and return status

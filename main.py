@@ -47,7 +47,7 @@ def main():
                 print('Error sending response to the user(client)')
                 print(e)
 
-        time.sleep(1)
+        time.sleep(0.1)
 
 
         # response = requests.get(get_unsent_messages_url + f'&key={API_KEYS[0]}')
