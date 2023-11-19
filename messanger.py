@@ -17,7 +17,9 @@ load_dotenv()  # take environment variables from example_for_dot_env.
 
 
 class Messanger:
-    def __init__(self):
+    def __init__(self, make_sms_chat_failed=False):
+        self.make_sms_chat_failed = make_sms_chat_failed
+
         if platform.system() == "Linux":
             self.driver = webdriver.Firefox()
         elif platform.system() == "Windows":
@@ -95,12 +97,24 @@ class Messanger:
             return "failed"
 
     def __wait_and_get_msg_status(self):  # wait until timestamp is visible and return status
-        # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".error-icon")))  # failed to sent
+        # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".error-icon")))  # failed msg
+        # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".sent-icon")))  # sent msg in RCS chat only
+        # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".delivered-icon")))  # delivered msg in RCS chat only
+        # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".read-icon")))  # seen msg in RCS chat only
         try:
-            # wait until pending icon to be invisible
-            self.wait10.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sending-icon")))  # pending icon
+            # wait until sending icon to be invisible
+            self.wait10.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sending-icon")))  # sending icon
             try:
+                # if msg time stamp is appeared
+                # either in RCS chat or SMS chat then msg is sent successfully
                 self.driver.find_element(By.CSS_SELECTOR, "mws-absolute-timestamp")
+                if self.make_sms_chat_failed:  # if the msg is sent to regular SMS chat, and we want to make it always failed
+                    try:
+                        self.driver.find_element(By.CSS_SELECTOR, ".msg-info").text == 'SMS'
+                        print("failed")
+                        return "failed"
+                    except:
+                        pass
                 print("sent")
                 return "sent"
             except:

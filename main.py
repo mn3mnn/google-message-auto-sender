@@ -6,13 +6,19 @@ import requests
 import http
 import datetime
 import time
-
+import sys
 
 send_response_url = SEND_RESPONSE_URL
 
 
 def main():
-    messanger = Messanger()
+    args = sys.argv
+    make_sms_chat_failed = False
+    if len(args) > 1:
+        if args[1] == 'failed':
+            make_sms_chat_failed = True
+    print(f'make_sms_chat_failed: {make_sms_chat_failed}')
+    messanger = Messanger(make_sms_chat_failed=make_sms_chat_failed)
     messanger.login()
 
     while True:
