@@ -17,7 +17,7 @@ load_dotenv()  # take environment variables from example_for_dot_env.
 
 
 class Messanger:
-    def __init__(self, make_sms_chat_failed=False, timeout_waiting=10):
+    def __init__(self, make_sms_chat_failed=False, timeout_waiting=7):
         self.make_sms_chat_failed = make_sms_chat_failed  # if True, make all msg status sent in SMS chat failed
         self.timeout_waiting = timeout_waiting  # timeout waiting for msg status to be sent
 
