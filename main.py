@@ -14,10 +14,10 @@ send_response_url = SEND_RESPONSE_URL
 def main():  # args: timeout_waiting and failed (optional)
     args = sys.argv
 
-    # if failed is passed as an argument, make all msg status sent in SMS chat failed
-    make_sms_chat_failed = False
-    # if timeout_waiting is passed as an argument, set timeout_waiting that used to wait for msg status to appear
+    # if <timeout_waiting> is passed as a first argument, set timeout_waiting that used to wait for msg status to appear
     timeout_waiting = 10
+    # if 'failed' is passed as a second argument, make all msg status sent in SMS chat failed
+    make_sms_chat_failed = False
 
     if len(args) > 1:
         try:
