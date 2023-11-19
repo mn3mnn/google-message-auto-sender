@@ -11,14 +11,25 @@ import sys
 send_response_url = SEND_RESPONSE_URL
 
 
-def main():
+def main():  # args: timeout_waiting and failed (optional)
     args = sys.argv
+
+    # if failed is passed as an argument, make all msg status sent in SMS chat failed
     make_sms_chat_failed = False
+    # if timeout_waiting is passed as an argument, set timeout_waiting that used to wait for msg status to appear
+    timeout_waiting = 10
+
     if len(args) > 1:
-        if args[1] == 'failed':
+        try:
+            timeout_waiting = int(args[1])
+        except Exception as e:
+            pass
+
+    if len(args) > 2:
+        if args[2] == 'failed':
             make_sms_chat_failed = True
-    print(f'make_sms_chat_failed: {make_sms_chat_failed}')
-    messanger = Messanger(make_sms_chat_failed=make_sms_chat_failed)
+
+    messanger = Messanger(make_sms_chat_failed=make_sms_chat_failed, timeout_waiting=timeout_waiting)
     messanger.login()
 
     while True:

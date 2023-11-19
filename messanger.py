@@ -17,8 +17,9 @@ load_dotenv()  # take environment variables from example_for_dot_env.
 
 
 class Messanger:
-    def __init__(self, make_sms_chat_failed=False):
-        self.make_sms_chat_failed = make_sms_chat_failed
+    def __init__(self, make_sms_chat_failed=False, timeout_waiting=10):
+        self.make_sms_chat_failed = make_sms_chat_failed  # if True, make all msg status sent in SMS chat failed
+        self.timeout_waiting = timeout_waiting  # timeout waiting for msg status to be sent
 
         if platform.system() == "Linux":
             self.driver = webdriver.Firefox()
@@ -103,7 +104,7 @@ class Messanger:
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".read-icon")))  # seen msg in RCS chat only
         try:
             # wait until sending icon to be invisible
-            self.wait10.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sending-icon")))  # sending icon
+            WebDriverWait(self.driver, self.timeout_waiting).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sending-icon")))  # sending icon
             try:
                 # if msg time stamp is appeared
                 # either in RCS chat or SMS chat then msg is sent successfully
