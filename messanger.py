@@ -108,16 +108,33 @@ class Messanger:
             try:
                 # if msg time stamp is appeared
                 # either in RCS chat or SMS chat then msg is sent successfully
-                self.driver.find_element(By.CSS_SELECTOR, "mws-absolute-timestamp")
-                if self.make_sms_chat_failed:  # if the msg is sent to regular SMS chat, and we want to make it always failed
-                    try:
-                        self.driver.find_element(By.CSS_SELECTOR, ".msg-info").text == 'SMS'
-                        print("failed")
-                        return "failed"
-                    except:
-                        pass
-                print("sent")
-                return "sent"
+                # self.driver.find_element(By.CSS_SELECTOR, "mws-absolute-timestamp")
+
+                # if msg is sent in RCS chat only then msg is sent successfully
+                sent = delivered = read = None
+                try:
+                    self.driver.find_element(By.CSS_SELECTOR, ".sent-icon")
+                    sent = True
+                except:
+                    sent = False
+                try:
+                    self.driver.find_element(By.CSS_SELECTOR, ".delivered-icon")
+                    delivered = True
+                except:
+                    delivered = False
+                try:
+                    self.driver.find_element(By.CSS_SELECTOR, ".read-icon")
+                    read = True
+                except:
+                    read = False
+
+                if sent or delivered or read:
+                    print("sent")
+                    return "sent"
+                else:
+                    print("failed")
+                    return "failed"
+
             except:
                 # self.driver.find_element(By.CSS_SELECTOR, ".error-icon")
                 print("failed")
