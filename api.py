@@ -1,5 +1,7 @@
 import os
 
+from urllib.parse import unquote  # Import the unquote function for URL decoding
+
 from flask import Flask, request, jsonify
 from db import Message
 from urls import *
@@ -58,6 +60,17 @@ def send_message():
             response_json['error'] = 'Unauthorized'
             response_json['success'] = False
             return jsonify(response_json), 401
+
+        # Check if the message contains URL-encoded links and decode them
+        while '%' in message:
+            parts = message.split('%', 1)
+            non_encoded_part = parts[0]
+            encoded_part = parts[1][:2]  # Take the first two characters representing the encoded part
+            url_encoded_part = parts[1][2:]  # Take the rest of the encoded part
+            # Decode the URL-encoded part
+            decoded_url_part = unquote(encoded_part) + url_encoded_part
+            # Combine non-encoded part and decoded URL part
+            message = non_encoded_part + decoded_url_part
 
         try:  # Insert message into the database
             msg = Message.add_new_message(message, mobile_number)
