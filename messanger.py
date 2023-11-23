@@ -129,16 +129,16 @@ class Messanger:
                     read = False
 
                 if sent or delivered or read:
-                    print("sent")
+                    # print("sent")
                     return "sent"
                 else:
-                    print("failed")
+                    # print("failed")
                     return "failed"
 
             except:
                 # self.driver.find_element(By.CSS_SELECTOR, ".error-icon")
-                print("failed")
+                # print("failed")
                 return "failed"
         except:
-            print("timeout")
+            # print("timeout")
             return "timeout"

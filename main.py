@@ -71,9 +71,11 @@ def main():  # args: timeout_waiting and failed (optional)
 
             try:
                 res = requests.post(send_response_url, json=msg_json)
+                print(res)
             except Exception as e:
-                print('Error sending response to the user(client)')
                 print(e)
+
+            print(msg_json)
 
         time.sleep(0.1)
 
