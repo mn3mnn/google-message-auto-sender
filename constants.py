@@ -1,4 +1,4 @@
-FAILED = 'failed'
 SENT = 'sent'
+FAILED = 'failed'
 TIMEOUT = 'timeout'
 
