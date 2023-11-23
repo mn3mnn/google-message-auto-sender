@@ -43,42 +43,45 @@ def main():  # args: timeout_waiting and failed (optional)
 
         messages = Message.get_messages_by_status('unsent')
         for message in messages:
-            msg_id = message.id
-            mobile_number = message.mobile_number
-            message_content = message.content
-            if not all([msg_id, mobile_number, message_content]):
-                continue
-
-            status = messanger.send_message(mobile_number, message_content)
-            status_date = datetime.datetime.utcnow()
-
-            if status == FAILED:
-                Message.set_msg_status(msg_id, status)
-            elif status == SENT:
-                Message.set_msg_status(msg_id, status)
-            elif status == TIMEOUT:
-                Message.set_msg_status(msg_id, status)
-
-            msg_json = {
-                'ID': msg_id,
-                'status': status,
-                'dst_number': mobile_number
-            }
-
             try:
-                logging.info(f'\nSending response: {msg_json}\n')
-            except:
-                pass
+                msg_id = message.id
+                mobile_number = message.mobile_number
+                message_content = message.content
+                if not all([msg_id, mobile_number, message_content]):
+                    continue
 
-            try:
-                res = requests.post(send_response_url, json=msg_json)
-                print(res)
+                status = messanger.send_message(mobile_number, message_content)
+                status_date = datetime.datetime.utcnow()
+
+                if status == FAILED:
+                    Message.set_msg_status(msg_id, status)
+                elif status == SENT:
+                    Message.set_msg_status(msg_id, status)
+                elif status == TIMEOUT:
+                    Message.set_msg_status(msg_id, status)
+
+                msg_json = {
+                    'ID': msg_id,
+                    'status': status,
+                    'dst_number': mobile_number
+                }
+
+                try:
+                    logging.info(f'\nSending response: {msg_json}\n')
+                except:
+                    pass
+
+                try:
+                    res = requests.post(send_response_url, json=msg_json)
+                    print(res)
+                except Exception as e:
+                    print(e)
+
+                print(msg_json)
+
             except Exception as e:
                 print(e)
-
-            print(msg_json)
-
-        time.sleep(0.1)
+                continue
 
         # response = requests.get(get_unsent_messages_url + f'&key={API_KEYS[0]}')
         # if response.status_code == 200:
