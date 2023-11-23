@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 
@@ -15,7 +16,7 @@ app = Flask(__name__)
 
 # Configure logging
 log_file_path = 'incoming_requests.log'
-logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %Z')
 
 
 @app.route(SEND_MSG_ROUTE, methods=['POST', 'GET'])
@@ -50,7 +51,6 @@ def send_message():
     }
 
     try:
-
         data = request.json
         message = data.get('message', None)
         mobile_number = data.get('number', None)
@@ -66,6 +66,8 @@ def send_message():
             logging.info(f'\nIncoming request: {req_id} {request.method} {request.url} - JSON: {request.json}\n')
         except:
             pass
+
+        print(f'\nIncoming request: {datetime.datetime.utcnow()} {request.method} - JSON: {request.json}\n')
 
         if not all([message, mobile_number, key]):
             response_json['error'] = 'Invalid request'

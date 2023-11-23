@@ -14,7 +14,7 @@ send_response_url = SEND_RESPONSE_URL
 
 # Configure logging
 log_file_path = 'messages_status.log'
-logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %Z')
 
 
 def main():  # args: timeout_waiting and failed (optional)
@@ -49,7 +49,7 @@ def main():  # args: timeout_waiting and failed (optional)
                 continue
 
             status = messanger.send_message(mobile_number, message_content)
-            status_date = datetime.datetime.now()
+            status_date = datetime.datetime.utcnow()
 
             if status == 'failed':
                 Message.set_msg_status(msg_id, status)
