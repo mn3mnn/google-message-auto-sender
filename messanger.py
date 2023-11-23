@@ -12,6 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 from db import *
+from constants import SENT, FAILED, TIMEOUT
 
 load_dotenv()  # take environment variables from example_for_dot_env.
 
@@ -95,7 +96,7 @@ class Messanger:
             return self.__wait_and_get_msg_status()
 
         except:
-            return "failed"
+            return FAILED
 
     def __wait_and_get_msg_status(self):  # wait until timestamp is visible and return status
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".error-icon")))  # failed msg
@@ -103,6 +104,7 @@ class Messanger:
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".delivered-icon")))  # delivered msg in RCS chat only
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".read-icon")))  # seen msg in RCS chat only
         try:
+            time.sleep(random.uniform(0, 0.2))  # sleep random time between 1 and 3 seconds
             # wait until sending icon to be invisible
             WebDriverWait(self.driver, self.timeout_waiting).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sending-icon")))  # sending icon
             try:
@@ -130,15 +132,15 @@ class Messanger:
 
                 if sent or delivered or read:
                     # print("sent")
-                    return "sent"
+                    return SENT
                 else:
                     # print("failed")
-                    return "failed"
+                    return FAILED
 
             except:
                 # self.driver.find_element(By.CSS_SELECTOR, ".error-icon")
                 # print("failed")
-                return "failed"
+                return FAILED
         except:
             # print("timeout")
-            return "timeout"
+            return TIMEOUT

@@ -8,6 +8,7 @@ import datetime
 import time
 import sys
 import logging
+from constants import SENT, FAILED, TIMEOUT
 
 send_response_url = SEND_RESPONSE_URL
 
@@ -32,7 +33,7 @@ def main():  # args: timeout_waiting and failed (optional)
             pass
 
     if len(args) > 2:
-        if args[2] == 'failed':
+        if args[2] == FAILED:
             make_sms_chat_failed = True
 
     messanger = Messanger(make_sms_chat_failed=make_sms_chat_failed, timeout_waiting=timeout_waiting)
@@ -51,11 +52,11 @@ def main():  # args: timeout_waiting and failed (optional)
             status = messanger.send_message(mobile_number, message_content)
             status_date = datetime.datetime.utcnow()
 
-            if status == 'failed':
+            if status == FAILED:
                 Message.set_msg_status(msg_id, status)
-            elif status == 'sent':
+            elif status == SENT:
                 Message.set_msg_status(msg_id, status)
-            elif status == 'timeout':
+            elif status == TIMEOUT:
                 Message.set_msg_status(msg_id, status)
 
             msg_json = {

@@ -1,2 +1,4 @@
-MSG_STATUS = ['pending', 'sent', 'failed']
+FAILED = 'failed'
+SENT = 'sent'
+TIMEOUT = 'timeout'
 
