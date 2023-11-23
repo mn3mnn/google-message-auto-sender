@@ -1,3 +1,4 @@
+import json
 import os
 
 from urllib.parse import unquote  # Import the unquote function for URL decoding
@@ -5,10 +6,16 @@ from urllib.parse import unquote  # Import the unquote function for URL decoding
 from flask import Flask, request, jsonify
 from db import Message
 from urls import *
+import logging
+import uuid
 
 API_KEYS = ['123456']
 
 app = Flask(__name__)
+
+# Configure logging
+log_file_path = 'incoming_requests.log'
+logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 @app.route(SEND_MSG_ROUTE, methods=['POST', 'GET'])
@@ -43,6 +50,7 @@ def send_message():
     }
 
     try:
+
         data = request.json
         message = data.get('message', None)
         mobile_number = data.get('number', None)
@@ -50,6 +58,14 @@ def send_message():
         devices = data.get('devices', None)
         msg_type = data.get('type', None)
         prioritize = data.get('prioritize', None)
+
+        req_id = str(uuid.uuid4())
+
+        try:
+            # Log incoming request
+            logging.info(f'Incoming request: {req_id} {request.method} {request.url} - JSON: {request.json}')
+        except:
+            pass
 
         if not all([message, mobile_number, key]):
             response_json['error'] = 'Invalid request'
@@ -82,6 +98,12 @@ def send_message():
             msg_json['type'] = 'sms'
 
             response_json['data']['messages'].append(msg_json.copy())  # Appending a copy of the msg_json
+
+            try:
+                # Log the response that is sent to the client
+                logging.info(f'Response: {req_id} {json.dumps(response_json)}')
+            except:
+                pass
 
             return jsonify(response_json), 200
 

@@ -7,8 +7,14 @@ import http
 import datetime
 import time
 import sys
+import logging
 
 send_response_url = SEND_RESPONSE_URL
+
+
+# Configure logging
+log_file_path = 'messages_status.log'
+logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def main():  # args: timeout_waiting and failed (optional)
@@ -52,20 +58,24 @@ def main():  # args: timeout_waiting and failed (optional)
             elif status == 'timeout':
                 Message.set_msg_status(msg_id, status)
 
-            try:
-                msg_json = {
-                    'ID': msg_id,
-                    'status': status,
-                    'dst_number': mobile_number
-                }
-                print(requests.post(send_response_url, json=msg_json))
+            msg_json = {
+                'ID': msg_id,
+                'status': status,
+                'dst_number': mobile_number
+            }
 
+            try:
+                logging.info(f'Sending response: {msg_json}')
+            except:
+                pass
+
+            try:
+                res = requests.post(send_response_url, json=msg_json)
             except Exception as e:
                 print('Error sending response to the user(client)')
                 print(e)
 
         time.sleep(0.1)
-
 
         # response = requests.get(get_unsent_messages_url + f'&key={API_KEYS[0]}')
         # if response.status_code == 200:
