@@ -63,7 +63,7 @@ def send_message():
 
         try:
             # Log incoming request
-            logging.info(f'Incoming request: {req_id} {request.method} {request.url} - JSON: {request.json}')
+            logging.info(f'\nIncoming request: {req_id} {request.method} {request.url} - JSON: {request.json}\n')
         except:
             pass
 
@@ -78,7 +78,7 @@ def send_message():
             return jsonify(response_json), 401
 
         # Check if the message contains URL-encoded links and decode them
-        while '%' in message:
+        while '%' in message and message.index('%') < len(message) - 2:
             parts = message.split('%', 1)
             non_encoded_part = parts[0]
             encoded_part = parts[1][:2]  # Take the first two characters representing the encoded part
@@ -101,7 +101,7 @@ def send_message():
 
             try:
                 # Log the response that is sent to the client
-                logging.info(f'Response: {req_id} {json.dumps(response_json)}')
+                logging.info(f'\nResponse: {req_id} {json.dumps(response_json)}\n')
             except:
                 pass
 

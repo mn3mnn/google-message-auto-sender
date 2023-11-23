@@ -65,7 +65,7 @@ def main():  # args: timeout_waiting and failed (optional)
             }
 
             try:
-                logging.info(f'Sending response: {msg_json}')
+                logging.info(f'\nSending response: {msg_json}\n')
             except:
                 pass
 
