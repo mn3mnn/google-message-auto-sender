@@ -114,11 +114,11 @@ class Messanger:
 
                 # if msg is sent in RCS chat only then msg is sent successfully
                 sent = delivered = read = None
-                try:
-                    self.driver.find_element(By.CSS_SELECTOR, ".sent-icon")
-                    sent = True
-                except:
-                    sent = False
+                # try:
+                #     self.driver.find_element(By.CSS_SELECTOR, ".sent-icon")
+                #     sent = True
+                # except:
+                #     sent = False
                 try:
                     self.driver.find_element(By.CSS_SELECTOR, ".delivered-icon")
                     delivered = True
