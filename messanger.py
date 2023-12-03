@@ -109,28 +109,32 @@ class Messanger:
         try:
             # returning failed for all msg in SMS chat for now
             # returning failed for sent status in RCS chat for now
+            time.sleep(0.5)
 
-            WebDriverWait(self.driver, self.timeout_waiting) \
-                .until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.delivered-icon')  # RCS chat only
-                                      or driver.find_element(By.CSS_SELECTOR, '.read-icon')  # RCS chat only
-                                      or driver.find_element(By.CSS_SELECTOR, '.error-icon'))  # RCS and SMS chat
-            # or driver.find_element(By.CSS_SELECTOR, ".sent-icon")  # RCS chat only
-            # or driver.find_element(By.CSS_SELECTOR, "mws-absolute-timestamp")  # RCS and SMS chat
+            last_outgoing_msg = WebDriverWait(self.driver, 1).\
+                until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'mws-message-wrapper[is-last="true"][is-outgoing="true"]')))
+
+            WebDriverWait(last_outgoing_msg, self.timeout_waiting) \
+                .until(lambda msg: msg.find_element(By.CSS_SELECTOR, '.delivered-icon')  # RCS chat only
+                                      or msg.find_element(By.CSS_SELECTOR, '.read-icon')  # RCS chat only
+                                      or msg.find_element(By.CSS_SELECTOR, '.error-icon'))  # RCS and SMS chat
+            # or msg.find_element(By.CSS_SELECTOR, ".sent-icon")  # RCS chat only
+            # or msg.find_element(By.CSS_SELECTOR, "mws-absolute-timestamp")  # RCS and SMS chat
 
             try:
                 sent = delivered = read = None
                 # try:
-                #     self.driver.find_element(By.CSS_SELECTOR, ".sent-icon")
+                #     last_outgoing_msg.find_element(By.CSS_SELECTOR, ".sent-icon")
                 #     sent = True
                 # except:
                 #     sent = False
                 try:
-                    self.driver.find_element(By.CSS_SELECTOR, ".delivered-icon")
+                    last_outgoing_msg.find_element(By.CSS_SELECTOR, ".delivered-icon")
                     delivered = True
                 except:
                     delivered = False
                 try:
-                    self.driver.find_element(By.CSS_SELECTOR, ".read-icon")
+                    last_outgoing_msg.find_element(By.CSS_SELECTOR, ".read-icon")
                     read = True
                 except:
                     read = False
@@ -143,7 +147,6 @@ class Messanger:
                     return FAILED
 
             except:
-                # self.driver.find_element(By.CSS_SELECTOR, ".error-icon")
                 # print("failed")
                 return FAILED
         except:
