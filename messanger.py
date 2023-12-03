@@ -99,20 +99,25 @@ class Messanger:
             return FAILED
 
     def __wait_and_get_msg_status(self):  # wait until timestamp is visible and return status
+        # WebDriverWait(self.driver, self.timeout_waiting).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sending-icon")))  # wait until sending icon to be invisible
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".error-icon")))  # failed msg
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".sent-icon")))  # sent msg in RCS chat only
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".delivered-icon")))  # delivered msg in RCS chat only
         # self.wait10.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".read-icon")))  # seen msg in RCS chat only
-        try:
-            time.sleep(random.uniform(0, 0.2))  # sleep random time between 1 and 3 seconds
-            # wait until sending icon to be invisible
-            WebDriverWait(self.driver, self.timeout_waiting).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, ".sending-icon")))  # sending icon
-            try:
-                # if msg time stamp is appeared
-                # either in RCS chat or SMS chat then msg is sent successfully
-                # self.driver.find_element(By.CSS_SELECTOR, "mws-absolute-timestamp")
+        # self.driver.find_element(By.CSS_SELECTOR, "mws-absolute-timestamp")  # if msg time stamp is appeared either in RCS chat or SMS chat then msg is sent successfully
 
-                # if msg is sent in RCS chat only then msg is sent successfully
+        try:
+            # returning failed for all msg in SMS chat for now
+            # returning failed for sent status in RCS chat for now
+
+            WebDriverWait(self.driver, self.timeout_waiting) \
+                .until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.delivered-icon')  # RCS chat only
+                                      or driver.find_element(By.CSS_SELECTOR, '.read-icon')  # RCS chat only
+                                      or driver.find_element(By.CSS_SELECTOR, '.error-icon'))  # RCS and SMS chat
+            # or driver.find_element(By.CSS_SELECTOR, ".sent-icon")  # RCS chat only
+            # or driver.find_element(By.CSS_SELECTOR, "mws-absolute-timestamp")  # RCS and SMS chat
+
+            try:
                 sent = delivered = read = None
                 # try:
                 #     self.driver.find_element(By.CSS_SELECTOR, ".sent-icon")
