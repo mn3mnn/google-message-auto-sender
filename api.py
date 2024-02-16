@@ -9,9 +9,13 @@ from db import Message
 from urls import *
 import logging
 import uuid
+from constants import FAILED
 
 
 API_KEYS = ['123456']
+
+BLACKLISTED_NUMBERS = []
+BLACKLISTED_NUMBERS_RESPONSE = FAILED
 
 app = Flask(__name__)
 
@@ -117,6 +121,70 @@ def send_message():
 
     except Exception as e:
         response_json['error'] = "Server error, couldn't send the message"
+        response_json['success'] = False
+        return jsonify(response_json), 500
+
+
+@app.route('/blacklist', methods=['POST'])
+def blacklist_number():
+    response_json = {
+        'data': {
+            'blacklisted_numbers': []
+        },
+        'error': None,
+        'success': True
+    }
+    try:
+        data = request.json
+        number = data.get('number', None)
+
+        if not number:
+            response_json['error'] = 'Invalid request'
+            response_json['success'] = False
+            return jsonify(response_json), 400
+
+        if number in BLACKLISTED_NUMBERS:
+            response_json['error'] = 'Number already blacklisted'
+            response_json['success'] = False
+            return jsonify(response_json), 400
+
+        BLACKLISTED_NUMBERS.append(number)
+        response_json['data']['blacklisted_numbers'] = BLACKLISTED_NUMBERS
+
+        return jsonify(response_json), 200
+
+    except Exception as e:
+        response_json['error'] = "Server error, couldn't blacklist the number"
+        response_json['success'] = False
+        return jsonify(response_json), 500
+
+@app.route('/blacklist-response', methods=['POST'])
+def blacklist_response():
+    global BLACKLISTED_NUMBERS_RESPONSE
+
+    response_json = {
+        'data': {
+            'blacklist_response': BLACKLISTED_NUMBERS_RESPONSE
+        },
+        'error': None,
+        'success': True
+    }
+    try:
+        data = request.json
+        response = data.get('blacklist_response', None)
+
+        if not response:
+            response_json['error'] = 'Invalid request'
+            response_json['success'] = False
+            return jsonify(response_json), 400
+
+        BLACKLISTED_NUMBERS_RESPONSE = response
+        response_json['data']['blacklist_response'] = BLACKLISTED_NUMBERS_RESPONSE
+
+        return jsonify(response_json), 200
+
+    except Exception as e:
+        response_json['error'] = "Server error, couldn't set the response"
         response_json['success'] = False
         return jsonify(response_json), 500
 

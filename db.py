@@ -29,8 +29,8 @@ class Message(BaseModel):
         return f"Message: {self.content} to {self.mobile_number}"
 
     @classmethod
-    def add_new_message(cls, content, mobile_number):
-        msg = cls.create(content=content, mobile_number=mobile_number)
+    def add_new_message(cls, content, mobile_number, status='unsent'):
+        msg = cls.create(content=content, mobile_number=mobile_number, status=status)
         return msg
 
     @classmethod

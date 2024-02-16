@@ -1,14 +1,18 @@
-from messanger import *
-from urls import *
-# from api import *
+from flask.cli import with_appcontext
+
+from messanger import Messanger
+
+from api import *
 
 import requests
+from threading import Thread
+from subprocess import Popen
 import http
 import datetime
 import time
 import sys
 import logging
-from constants import SENT, FAILED, TIMEOUT
+from constants import SENT, FAILED, TIMEOUT, TIMEOUT_WAITING, MAKE_SMS_CHAT_FAILED
 
 send_response_url = SEND_RESPONSE_URL
 
@@ -18,28 +22,38 @@ log_file_path = 'messages_status.log'
 logging.basicConfig(filename=log_file_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S %Z')
 
 
-def main():  # args: timeout_waiting and failed (optional)
-    args = sys.argv
+def send_response_to_client(msg_id, status, mobile_number):
+    msg_json = {
+        'ID': msg_id,
+        'status': status,
+        'dst_number': mobile_number
+    }
 
-    # if <timeout_waiting> is passed as a first argument, set timeout_waiting that used to wait for msg status to appear
-    timeout_waiting = 7
-    # if 'failed' is passed as a second argument, make all msg status sent in SMS chat failed
-    make_sms_chat_failed = False
+    try:
+        logging.info(f'\nSending response: {msg_json}\n')
+    except:
+        pass
 
-    if len(args) > 1:
-        try:
-            timeout_waiting = int(args[1])
-        except Exception as e:
-            pass
+    try:
+        res = requests.post(send_response_url, json=msg_json)
+        print(res)
+    except Exception as e:
+        print(e)
 
-    if len(args) > 2:
-        if args[2] == FAILED:
-            make_sms_chat_failed = True
 
-    messanger = Messanger(make_sms_chat_failed=make_sms_chat_failed, timeout_waiting=timeout_waiting)
+def worker():
+    global STOP
+    print("Worker started")
+
+    messanger = Messanger()
+    messanger.set_timeout_waiting(TIMEOUT_WAITING)
+    messanger.set_make_sms_chat_failed(MAKE_SMS_CHAT_FAILED)
     messanger.login()
 
-    while True:
+    while not STOP:
+        if not messanger.is_logged_in():
+            messanger.login()
+            time.sleep(1)
 
         messages = Message.get_messages_by_status('unsent')
         for message in messages:
@@ -49,9 +63,12 @@ def main():  # args: timeout_waiting and failed (optional)
                 message_content = message.content
                 if not all([msg_id, mobile_number, message_content]):
                     continue
+                if mobile_number in BLACKLISTED_NUMBERS:
+                    send_response_to_client(msg_id, BLACKLISTED_NUMBERS_RESPONSE, mobile_number)
+                    continue
 
                 status = messanger.send_message(mobile_number, message_content)
-                status_date = datetime.datetime.utcnow()
+                # status_date = datetime.datetime.utcnow()
 
                 if status == FAILED:
                     Message.set_msg_status(msg_id, status)
@@ -60,55 +77,24 @@ def main():  # args: timeout_waiting and failed (optional)
                 elif status == TIMEOUT:
                     Message.set_msg_status(msg_id, status)
 
-                msg_json = {
-                    'ID': msg_id,
-                    'status': status,
-                    'dst_number': mobile_number
-                }
-
-                try:
-                    logging.info(f'\nSending response: {msg_json}\n')
-                except:
-                    pass
-
-                try:
-                    res = requests.post(send_response_url, json=msg_json)
-                    print(res)
-                except Exception as e:
-                    print(e)
-
-                print(msg_json)
+                send_response_to_client(msg_id, status, mobile_number)
 
             except Exception as e:
                 print(e)
                 continue
 
-        # response = requests.get(get_unsent_messages_url + f'&key={API_KEYS[0]}')
-        # if response.status_code == 200:
-        #     data = response.json()
-        #     messages = data.get('data', {}).get('messages', [])
-        #     for message in messages:
-        #         msg_id = message.get('ID', None)
-        #         mobile_number = message.get('number', None)
-        #         message_content = message.get('message', None)
-        #         if not all([msg_id, mobile_number, message_content]):
-        #             continue
-        #
-        #         status = messanger.send_message(mobile_number, message_content)
-        #         status_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        #
-        #         if status == 'failed':
-        #             Message.update_msg_status(msg_id, status)  # update status in the database
-        #         elif status == 'sent':
-        #             Message.update_msg_status(msg_id, status)
-        #         elif status == 'timeout':
-        #             Message.update_msg_status(msg_id, status)
-        #
-        #         # send response to the user(client)
-        #         requests.get(send_response_url.format(msg_id, status_date, status))
-        #
-        # time.sleep(5)
+
+# run "flask --app .\main.py worker" in another terminal to start the worker
+@app.cli.command("worker")
+@with_appcontext
+def worker_command():
+    worker()
 
 
 if __name__ == "__main__":
-    main()
+    STOP = False
+
+    Popen(["flask", "--app", "main.py", "worker"])
+
+    # app.run(debug=True)  # port=5000
+    #

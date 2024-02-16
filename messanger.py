@@ -18,7 +18,16 @@ load_dotenv()  # take environment variables from example_for_dot_env.
 
 
 class Messanger:
-    def __init__(self, make_sms_chat_failed=False, timeout_waiting=7):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._initialize_driver(*args, **kwargs)
+        return cls._instance
+
+    def _initialize_driver(self, make_sms_chat_failed=False, timeout_waiting=7):
+
         self.make_sms_chat_failed = make_sms_chat_failed  # if True, make all msg status sent in SMS chat failed
         self.timeout_waiting = timeout_waiting  # timeout waiting for msg status to be sent
 
@@ -29,7 +38,7 @@ class Messanger:
             firefox_binary = os.getenv('FIREFOX_BIN')
 
             self.driver = webdriver.Firefox(executable_path=geckodriver_path,
-                                            firefox_binary=firefox_binary)
+                                             firefox_binary=firefox_binary)
 
         self.driver.maximize_window()
         self.wait5 = WebDriverWait(self.driver, 5)
@@ -37,11 +46,20 @@ class Messanger:
         self.wait30 = WebDriverWait(self.driver, 20)
         self.wait120 = WebDriverWait(self.driver, 120)
 
+    def __init__(self, make_sms_chat_failed=False, timeout_waiting=7):
+        pass
+
     def __del__(self):
         try:
             self.driver.quit()
         except:
             pass
+
+    def set_make_sms_chat_failed(self, make_sms_chat_failed):
+        self.make_sms_chat_failed = make_sms_chat_failed
+
+    def set_timeout_waiting(self, timeout_waiting):
+        self.timeout_waiting = timeout_waiting
 
     def is_logged_in(self):
         try:
@@ -152,3 +170,5 @@ class Messanger:
         except:
             # print("timeout")
             return TIMEOUT
+
+
