@@ -84,17 +84,11 @@ def worker():
                 continue
 
 
-# run "flask --app .\main.py worker" in another terminal to start the worker
-@app.cli.command("worker")
-@with_appcontext
-def worker_command():
-    worker()
-
-
 if __name__ == "__main__":
     STOP = False
 
-    Popen(["flask", "--app", "main.py", "worker"])
+    worker_thread = Thread(target=worker)
+    worker_thread.start()
 
-    # app.run(debug=True)  # port=5000
-    #
+    app.run(debug=True, use_reloader=False)  # port=5000
+

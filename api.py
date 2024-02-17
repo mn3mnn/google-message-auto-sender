@@ -84,6 +84,11 @@ def send_message():
             response_json['success'] = False
             return jsonify(response_json), 401
 
+        if mobile_number in BLACKLISTED_NUMBERS:
+            response_json['error'] = BLACKLISTED_NUMBERS_RESPONSE
+            response_json['success'] = False
+            return jsonify(response_json), 403
+
         # Check if the message contains URL-encoded links and decode them
         while '%' in message and message.index('%') < len(message) - 2:
             parts = message.split('%', 1)
