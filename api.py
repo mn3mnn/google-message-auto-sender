@@ -85,6 +85,8 @@ def send_message():
             return jsonify(response_json), 401
 
         if mobile_number in BLACKLISTED_NUMBERS:
+            print(f'attempt to send a msg to Blacklisted number: {mobile_number}')
+
             response_json['error'] = BLACKLISTED_NUMBERS_RESPONSE
             response_json['success'] = False
             return jsonify(response_json), 403
