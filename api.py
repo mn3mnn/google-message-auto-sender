@@ -188,6 +188,28 @@ def whitelist_response():
         return jsonify(response_json), 500
 
 
+
+@app.route('/clear-whitelist', methods=['POST'])
+def clear_whitelist():
+    response_json = {
+        'data': {
+            'whitelisted_numbers': []
+        },
+        'error': None,
+        'success': True
+    }
+    try:
+        WHITELISTED_NUMBERS.clear()
+        response_json['data']['whitelisted_numbers'] = WHITELISTED_NUMBERS
+
+        return jsonify(response_json), 200
+
+    except Exception as e:
+        response_json['error'] = "Server error, couldn't clear the whitelist"
+        response_json['success'] = False
+        return jsonify(response_json), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True)  # port=5000
 
