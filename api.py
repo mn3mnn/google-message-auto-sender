@@ -171,7 +171,7 @@ def blacklist_response():
     }
     try:
         data = request.json
-        response = data.get('blacklist_response', None)
+        response = data.get('whitelist_response', None)
 
         if not response:
             response_json['error'] = 'Invalid request'
