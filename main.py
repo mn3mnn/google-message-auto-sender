@@ -63,8 +63,8 @@ def worker():
                 message_content = message.content
                 if not all([msg_id, mobile_number, message_content]):
                     continue
-                if mobile_number in BLACKLISTED_NUMBERS:
-                    send_response_to_client(msg_id, BLACKLISTED_NUMBERS_RESPONSE, mobile_number)
+                if mobile_number not in WHITELISTED_NUMBERS:
+                    send_response_to_client(msg_id, WHITELISTED_NUMBERS_RESPONSE, mobile_number)
                     continue
 
                 status = messanger.send_message(mobile_number, message_content)

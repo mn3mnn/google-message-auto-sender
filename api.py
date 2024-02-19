@@ -14,8 +14,8 @@ from constants import FAILED
 
 API_KEYS = ['123456']
 
-BLACKLISTED_NUMBERS = []
-BLACKLISTED_NUMBERS_RESPONSE = FAILED
+WHITELISTED_NUMBERS = []
+WHITELISTED_NUMBERS_RESPONSE = FAILED
 
 app = Flask(__name__)
 
@@ -84,13 +84,6 @@ def send_message():
             response_json['success'] = False
             return jsonify(response_json), 401
 
-        if mobile_number in BLACKLISTED_NUMBERS:
-            print(f'attempt to send a msg to Blacklisted number: {mobile_number}')
-
-            response_json['error'] = BLACKLISTED_NUMBERS_RESPONSE
-            response_json['success'] = False
-            return jsonify(response_json), 403
-
         # Check if the message contains URL-encoded links and decode them
         while '%' in message and message.index('%') < len(message) - 2:
             parts = message.split('%', 1)
@@ -150,13 +143,13 @@ def blacklist_number():
             response_json['success'] = False
             return jsonify(response_json), 400
 
-        if number in BLACKLISTED_NUMBERS:
+        if number in WHITELISTED_NUMBERS:
             response_json['error'] = 'Number already blacklisted'
             response_json['success'] = False
             return jsonify(response_json), 400
 
-        BLACKLISTED_NUMBERS.append(number)
-        response_json['data']['blacklisted_numbers'] = BLACKLISTED_NUMBERS
+        WHITELISTED_NUMBERS.append(number)
+        response_json['data']['blacklisted_numbers'] = WHITELISTED_NUMBERS
 
         return jsonify(response_json), 200
 
@@ -167,11 +160,11 @@ def blacklist_number():
 
 @app.route('/blacklist-response', methods=['POST'])
 def blacklist_response():
-    global BLACKLISTED_NUMBERS_RESPONSE
+    global WHITELISTED_NUMBERS_RESPONSE
 
     response_json = {
         'data': {
-            'blacklist_response': BLACKLISTED_NUMBERS_RESPONSE
+            'blacklist_response': WHITELISTED_NUMBERS_RESPONSE
         },
         'error': None,
         'success': True
@@ -185,8 +178,8 @@ def blacklist_response():
             response_json['success'] = False
             return jsonify(response_json), 400
 
-        BLACKLISTED_NUMBERS_RESPONSE = response
-        response_json['data']['blacklist_response'] = BLACKLISTED_NUMBERS_RESPONSE
+        WHITELISTED_NUMBERS_RESPONSE = response
+        response_json['data']['blacklist_response'] = WHITELISTED_NUMBERS_RESPONSE
 
         return jsonify(response_json), 200
 
