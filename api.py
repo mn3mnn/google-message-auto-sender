@@ -125,7 +125,7 @@ def send_message():
         return jsonify(response_json), 500
 
 
-@app.route('/blacklist', methods=['POST'])
+@app.route('/whitelist', methods=['POST'])
 def blacklist_number():
     response_json = {
         'data': {
@@ -158,7 +158,7 @@ def blacklist_number():
         response_json['success'] = False
         return jsonify(response_json), 500
 
-@app.route('/blacklist-response', methods=['POST'])
+@app.route('/whitelist-response', methods=['POST'])
 def blacklist_response():
     global WHITELISTED_NUMBERS_RESPONSE
 
