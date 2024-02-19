@@ -64,6 +64,7 @@ def worker():
                 if not all([msg_id, mobile_number, message_content]):
                     continue
                 if mobile_number not in WHITELISTED_NUMBERS:
+                    Message.set_msg_status(msg_id, WHITELISTED_NUMBERS_RESPONSE)
                     send_response_to_client(msg_id, WHITELISTED_NUMBERS_RESPONSE, mobile_number)
                     continue
 
