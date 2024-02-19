@@ -15,7 +15,7 @@ from constants import FAILED
 API_KEYS = ['123456']
 
 WHITELISTED_NUMBERS = []
-WHITELISTED_NUMBERS_RESPONSE = FAILED
+WHITELISTED_NUMBERS_RESPONSE = [FAILED]
 
 app = Flask(__name__)
 
@@ -129,7 +129,7 @@ def send_message():
 def whitelist_number():
     response_json = {
         'data': {
-            'blacklisted_numbers': []
+            'whitelisted_numbers': []
         },
         'error': None,
         'success': True
@@ -149,7 +149,7 @@ def whitelist_number():
             return jsonify(response_json), 400
 
         WHITELISTED_NUMBERS.append(number)
-        response_json['data']['blacklisted_numbers'] = WHITELISTED_NUMBERS
+        response_json['data']['whitelisted_numbers'] = WHITELISTED_NUMBERS
 
         return jsonify(response_json), 200
 
@@ -160,11 +160,10 @@ def whitelist_number():
 
 @app.route('/whitelist-response', methods=['POST'])
 def whitelist_response():
-    global WHITELISTED_NUMBERS_RESPONSE
 
     response_json = {
         'data': {
-            'whitelist_response': WHITELISTED_NUMBERS_RESPONSE
+            'whitelist_response': WHITELISTED_NUMBERS_RESPONSE[0]
         },
         'error': None,
         'success': True
@@ -178,8 +177,8 @@ def whitelist_response():
             response_json['success'] = False
             return jsonify(response_json), 400
 
-        WHITELISTED_NUMBERS_RESPONSE = response
-        response_json['data']['whitelist_response'] = WHITELISTED_NUMBERS_RESPONSE
+        WHITELISTED_NUMBERS_RESPONSE[0] = response
+        response_json['data']['whitelist_response'] = WHITELISTED_NUMBERS_RESPONSE[0]
 
         return jsonify(response_json), 200
 
