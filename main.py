@@ -63,9 +63,15 @@ def worker():
                 message_content = message.content
                 if not all([msg_id, mobile_number, message_content]):
                     continue
+                print(f"whitelisted numbers: {WHITELISTED_NUMBERS}")
+                print(f"non whitelisted numbers response: {WHITELISTED_NUMBERS_RESPONSE}")
+                print(f"mobile number: {mobile_number}")
                 if mobile_number not in WHITELISTED_NUMBERS:
+                    print(f"Number {mobile_number} not in whitelist")
                     Message.set_msg_status(msg_id, WHITELISTED_NUMBERS_RESPONSE)
+                    print(f"Message status set to {WHITELISTED_NUMBERS_RESPONSE}")
                     send_response_to_client(msg_id, WHITELISTED_NUMBERS_RESPONSE, mobile_number)
+                    print(f"Response sent to client")
                     continue
 
                 status = messanger.send_message(mobile_number, message_content)

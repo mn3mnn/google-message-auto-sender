@@ -126,7 +126,7 @@ def send_message():
 
 
 @app.route('/whitelist', methods=['POST'])
-def blacklist_number():
+def whitelist_number():
     response_json = {
         'data': {
             'blacklisted_numbers': []
@@ -159,12 +159,12 @@ def blacklist_number():
         return jsonify(response_json), 500
 
 @app.route('/whitelist-response', methods=['POST'])
-def blacklist_response():
+def whitelist_response():
     global WHITELISTED_NUMBERS_RESPONSE
 
     response_json = {
         'data': {
-            'blacklist_response': WHITELISTED_NUMBERS_RESPONSE
+            'whitelist_response': WHITELISTED_NUMBERS_RESPONSE
         },
         'error': None,
         'success': True
@@ -179,7 +179,7 @@ def blacklist_response():
             return jsonify(response_json), 400
 
         WHITELISTED_NUMBERS_RESPONSE = response
-        response_json['data']['blacklist_response'] = WHITELISTED_NUMBERS_RESPONSE
+        response_json['data']['whitelist_response'] = WHITELISTED_NUMBERS_RESPONSE
 
         return jsonify(response_json), 200
 
