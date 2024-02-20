@@ -39,7 +39,7 @@ def send_response_to_client(msg_id, status, mobile_number):
         res = requests.post(send_response_url, json=msg_json, timeout=7)
         print(f"Response from client api: {res.status_code} {res.text}")
     except Exception as e:
-        print('Error sending response to client api: {e}')
+        print(f'Error sending response to client api: {e}')
 
 
 def worker():
