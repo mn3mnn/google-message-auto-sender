@@ -61,15 +61,15 @@ class Messanger:
     def set_timeout_waiting(self, timeout_waiting):
         self.timeout_waiting = timeout_waiting
 
-    # def is_logged_in(self):
-    #     try:
-    #         # Execute JavaScript to get token value from local storage
-    #         script = "return localStorage.getItem('pr_mw_exclusive_tab_key');"
-    #         value = self.driver.execute_script(script)
-    #         value = json.loads(value)
-    #         return value is not None
-    #     except:
-    #         return False
+    def is_logged_in(self):
+        try:
+            # Execute JavaScript to get token value from local storage
+            script = "return localStorage.getItem('pr_mw_exclusive_tab_key');"
+            value = self.driver.execute_script(script)
+            value = json.loads(value)
+            return value is not None
+        except:
+            return False
 
     def login(self):
         try:

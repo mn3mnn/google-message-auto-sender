@@ -42,7 +42,6 @@ def send_response_to_client(msg_id, status, mobile_number):
 
 
 def worker():
-    global STOP
     print("Worker started")
 
     messanger = Messanger()
@@ -50,10 +49,11 @@ def worker():
     messanger.set_make_sms_chat_failed(MAKE_SMS_CHAT_FAILED)
     messanger.login()
 
-    while not STOP:
+    while True:
         messages = Message.get_messages_by_status('unsent')
         for message in messages:
             try:
+                print(f"trying to send message: {message}")
                 msg_id = message.id
                 mobile_number = message.mobile_number
                 message_content = message.content
@@ -88,7 +88,6 @@ def worker():
 
 
 if __name__ == "__main__":
-    STOP = False
 
     worker_thread = Thread(target=worker)
     worker_thread.start()
