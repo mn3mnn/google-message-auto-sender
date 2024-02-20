@@ -51,10 +51,6 @@ def worker():
     messanger.login()
 
     while not STOP:
-        if not messanger.is_logged_in():
-            messanger.login()
-            time.sleep(1)
-
         messages = Message.get_messages_by_status('unsent')
         for message in messages:
             try:
