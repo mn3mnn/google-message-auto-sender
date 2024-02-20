@@ -10,12 +10,16 @@ from urls import *
 import logging
 import uuid
 from constants import FAILED
+from threading import Lock
 
 
 API_KEYS = ['123456']
 
 WHITELISTED_NUMBERS = []
 WHITELISTED_NUMBERS_RESPONSE = [FAILED]
+
+messages_to_be_sent = []
+lock = Lock()
 
 app = Flask(__name__)
 
@@ -97,6 +101,9 @@ def send_message():
 
         try:  # Insert message into the database
             msg = Message.add_new_message(message, mobile_number)
+
+            with lock:
+                messages_to_be_sent.append(msg)
 
             msg_json['ID'] = msg.id
             msg_json['message'] = msg.content

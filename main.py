@@ -50,41 +50,48 @@ def worker():
     messanger.login()
 
     while True:
-        messages = Message.get_messages_by_status('unsent')
-        for message in messages:
-            try:
-                print(f"trying to send message: {message}")
-                msg_id = message.id
-                mobile_number = message.mobile_number
-                message_content = message.content
-                if not all([msg_id, mobile_number, message_content]):
-                    continue
-                print(f"whitelisted numbers: {WHITELISTED_NUMBERS}")
-                print(f"non whitelisted numbers response: {WHITELISTED_NUMBERS_RESPONSE[0]}")
-                print(f"mobile number: {mobile_number}")
-                if mobile_number not in WHITELISTED_NUMBERS:
-                    print(f"Number {mobile_number} not in whitelist")
-                    Message.set_msg_status(msg_id, WHITELISTED_NUMBERS_RESPONSE[0])
-                    print(f"Message status set to {WHITELISTED_NUMBERS_RESPONSE[0]}")
-                    send_response_to_client(msg_id, WHITELISTED_NUMBERS_RESPONSE[0], mobile_number)
-                    print(f"Response sent to client")
-                    continue
+        # messages = Message.get_messages_by_status('unsent')
+        if not messages_to_be_sent:
+            continue
 
-                status = messanger.send_message(mobile_number, message_content)
-                # status_date = datetime.datetime.utcnow()
+        with lock:
+            message = messages_to_be_sent.pop(0)
 
-                if status == FAILED:
-                    Message.set_msg_status(msg_id, status)
-                elif status == SENT:
-                    Message.set_msg_status(msg_id, status)
-                elif status == TIMEOUT:
-                    Message.set_msg_status(msg_id, status)
+        try:
+            print(f"starting to process message: {message}")
 
-                send_response_to_client(msg_id, status, mobile_number)
-
-            except Exception as e:
-                print(e)
+            msg_id = message.id
+            mobile_number = message.mobile_number
+            message_content = message.content
+            if not all([msg_id, mobile_number, message_content]):
+                print(f"Message {msg_id} has missing data")
                 continue
+
+            print(f"whitelisted numbers: {WHITELISTED_NUMBERS}")
+            print(f"non whitelisted numbers response: {WHITELISTED_NUMBERS_RESPONSE[0]}")
+            print(f"mobile number: {mobile_number}")
+            if mobile_number not in WHITELISTED_NUMBERS:
+                print(f"Number {mobile_number} not in whitelist")
+                Message.set_msg_status(msg_id, WHITELISTED_NUMBERS_RESPONSE[0])
+                print(f"Message status set to {WHITELISTED_NUMBERS_RESPONSE[0]}")
+                send_response_to_client(msg_id, WHITELISTED_NUMBERS_RESPONSE[0], mobile_number)
+                print(f"Response sent to client")
+                continue
+
+            print(f"trying to send message {message} in browser")
+            status = messanger.send_message(mobile_number, message_content)
+            # status_date = datetime.datetime.utcnow()
+            if status == FAILED:
+                Message.set_msg_status(msg_id, status)
+            elif status == SENT:
+                Message.set_msg_status(msg_id, status)
+            elif status == TIMEOUT:
+                Message.set_msg_status(msg_id, status)
+            send_response_to_client(msg_id, status, mobile_number)
+
+        except Exception as e:
+            print(e)
+            continue
 
 
 if __name__ == "__main__":
